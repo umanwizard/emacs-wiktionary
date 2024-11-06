@@ -84,11 +84,11 @@
       (t (wiktionary--insert-several-body-elts inners props))))
     (`(,_ ,_ . ,inners) (wiktionary--insert-several-body-elts inners props))))
 
-(defun wiktionary--insert-dfn (dfn)
-  "Render definition with html source DFN in the current buffer."
+(defun wiktionary--insert-html (src)
+  "Render snippet with html source SRC in the current buffer."
   (pcase-let ((`(html _ (body _ . ,body))
                (with-temp-buffer
-                 (insert dfn)
+                 (insert src)
                  (libxml-parse-html-region))))
     (wiktionary--insert-several-body-elts body nil)))
 
@@ -140,11 +140,19 @@
              for dfn being the elements of (nreverse (--filter (< 0 (length (cdr (assq 'definition (cdr it))))) dfns)) using (index i)
              do (let* ((pos (car dfn))
                        (dfn-alist (cdr dfn))
-                       (dfn-content (cdr (assq 'definition dfn-alist))))
+                       (dfn-content (cdr (assq 'definition dfn-alist)))
+                       (examples (cdr (assq 'examples dfn-alist))))
                   (insert (propertize (format "%d. %s:" (1+ i) pos) 'face '(italic ;; underline
                                                                                    ))
                           " ")
-                  (wiktionary--insert-dfn dfn-content)
+                  (wiktionary--insert-html dfn-content)
+                  (insert ?\n)
+                  (cl-loop
+                   for ex being the elements of examples
+                   do
+                   (insert "  • " )
+                   (wiktionary--insert-html ex)
+                   (insert ?\n))
                   (insert ?\n)))
             (insert ?\n))))))
 
