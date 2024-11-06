@@ -1,5 +1,4 @@
-;; -*- lexical-binding: t; mode: emacs-lisp;-*-
-;;; wiktionary.el --- Look up words in Wiktionary
+;;; wiktionary.el --- Look up words in Wiktionary  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024 Brennan Vincent
 
@@ -12,27 +11,30 @@
                                         
 ;;; Commentary:
 ;;;
-;;; Look up words in English Wiktionary. See README.md for details.
+;;; Look up words in English Wiktionary.  See README.md for details.
 
 (require 'request)
 (require 'thingatpt)
 
+;;; Code:
+
 (defgroup wiktionary nil
-  "Look up words in Wiktionary"
+  "Look up words in Wiktionary."
   :group 'comm
   :prefix "wiktionary-")
 
 (defcustom wiktionary-language-order nil
-  "The order of languages to appear in Wiktionary results"
+  "The order of languages to appear in Wiktionary results."
   :type '(repeat string)
   :group 'wiktionary)
 
 (defcustom wiktionary-show-unordered-languages t
-  "Whether to show languages that don't appear in wiktionary-language-order"
+  "Whether to show languages that don't appear in `wiktionary-language-order'."
   :type 'boolean
   :group 'wiktionary)
 
 (defun wiktionary-navigate ()
+  "Navigate to the link at point."
   (interactive)
   (wiktionary-search-word (word-at-point)))
 
@@ -45,6 +47,7 @@
     map))
 
 (defun wiktionary--lang-order-val (lang)
+  "Get the position of LANG in `wiktionary-language-order', if any."
   (cl-position lang wiktionary-language-order :test #'string-equal))
 
 (define-derived-mode wiktionary-result-mode special-mode "Wiktionary Results"
@@ -53,11 +56,13 @@
   (setq buffer-read-only t))
 
 (defun wiktionary--insert-several-body-elts (elts props)
+  "Render ELTS with text properties PROPS in the current buffer."
   (dolist (body-element elts)
     (wiktionary--insert-body-elt body-element props)))
 
 (defun wiktionary--insert-body-elt (elt props)
-  (pcase elt    
+  "Render ELT with text properties PROPS in the current buffer."
+  (pcase elt
     ((and (pred stringp) x)
      (let ((insert-point (point)))
        (insert (apply #'propertize x props))
@@ -79,13 +84,15 @@
     (`(,_ ,_ . ,inners) (wiktionary--insert-several-body-elts inners props))))
 
 (defun wiktionary--insert-dfn (dfn)
+  "Render definition with html source DFN in the current buffer."
   (pcase-let ((`(html _ (body _ . ,body))
                (with-temp-buffer
                  (insert dfn)
-                 (libxml-parse-html-region))))            
+                 (libxml-parse-html-region))))
     (wiktionary--insert-several-body-elts body nil)))
 
 (defun wiktionary--insert-data (data)
+  "Render word-data pair DATA in the current buffer."
   (let ((word (car data))
         (data (cdr data))
         langs)
@@ -145,6 +152,7 @@
 (defvar-local wiktionary--current-data nil)
 
 (defun wiktionary--load-data (data)
+  "Render word-data pair DATA in the current buffer, updating history."
   (let* ((inhibit-read-only t))
     (erase-buffer)
     (let ((cur wiktionary--current-data))
@@ -156,6 +164,7 @@
     (goto-char (point-min))))
 
 (defun wiktionary-back ()
+  "Navigate back in the history of the current buffer."
   (interactive)
   (let ((inhibit-read-only t))
     (if wiktionary--history
@@ -166,9 +175,10 @@
           (erase-buffer)
           (wiktionary--insert-data wiktionary--current-data)
           (goto-char (point-min)))
-      (error "no previous data"))))
+      (error "No previous data"))))
 
 (defun wiktionary-forward ()
+  "Navigate forward in the history of the current buffer."
   (interactive)
   (let ((inhibit-read-only t))
     (if wiktionary--future
@@ -179,10 +189,11 @@
           (erase-buffer)
           (wiktionary--insert-data wiktionary--current-data)
           (goto-char (point-min)))
-      (error "no future data"))))
+      (error "No future data"))))
 
 ;;;###autoload
 (defun wiktionary-search-word (word)
+  "Search for WORD in English Wiktionary and display it in a pop-up buffer."
   (interactive "M")
   (let* ((url (format "https://en.wiktionary.org/api/rest_v1/page/definition/%s?redirect=true" word))
          (r (request url :sync t))
