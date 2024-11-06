@@ -15,6 +15,7 @@
 
 (require 'request)
 (require 'thingatpt)
+(require 'dash)
 
 ;;; Code:
 
