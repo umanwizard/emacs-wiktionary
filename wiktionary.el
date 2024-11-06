@@ -1,26 +1,36 @@
-;;; wiktionary.el --- Look up words in wiktionary
+;; -*- lexical-binding: t; mode: emacs-lisp;-*-
+;;; wiktionary.el --- Look up words in Wiktionary
 
 ;; Copyright (C) 2024 Brennan Vincent
 
 ;; Author: Brennan Vincent <brennan@umanwizard.com>
 ;; Version: 0
-;; Package-Requires: (request dash)
-;; Keywords: wiktionary, dictionary
+;; Package-Requires: ((request "0.3.3") (dash "2.19.1") (emacs "25.1"))
+;; Keywords: comm
 ;; URL: https://github.com/umanwizard/emacs-wiktionary
 
                                         
-;; needs external libraries: request, dash
+;;; Commentary:
+;;;
+;;; Look up words in English Wiktionary. See README.md for details.
 
 (require 'request)
 (require 'thingatpt)
 
+(defgroup wiktionary nil
+  "Look up words in Wiktionary"
+  :group 'comm
+  :prefix "wiktionary-")
+
 (defcustom wiktionary-language-order nil
   "The order of languages to appear in Wiktionary results"
-  :type '(repeat string))
+  :type '(repeat string)
+  :group 'wiktionary)
 
 (defcustom wiktionary-show-unordered-languages t
   "Whether to show languages that don't appear in wiktionary-language-order"
-  :type 'boolean)
+  :type 'boolean
+  :group 'wiktionary)
 
 (defun wiktionary-navigate ()
   (interactive)
@@ -187,3 +197,5 @@
     (wiktionary--load-data `(,word . ,data))))
 
 (provide 'wiktionary)
+
+;;; wiktionary.el ends here
