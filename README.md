@@ -16,6 +16,8 @@ To navigate to the link under the cursor, hit `RET`.
 
 To go back and forward in the Wiktionary browser, hit `l` and `r`, respectively.
 
+To search for a new word, hit `s`.
+
 ## Configuration
 
 These variables are available via Customize:

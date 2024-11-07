@@ -48,6 +48,7 @@
     (keymap-set map "RET" #'wiktionary-navigate)
     (keymap-set map "l" #'wiktionary-back)
     (keymap-set map "r" #'wiktionary-forward)
+    (keymap-set map "s" #'wiktionary-search-word)
     map))
 
 (defun wiktionary--lang-order-val (lang)
