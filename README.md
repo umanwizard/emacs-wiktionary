@@ -1,5 +1,7 @@
 # Emacs Wiktionary browser
 
+[Screenshot of wiktionary.el in action](./ss.png)
+
 ## Getting started
 
 To load the package, add this to your `.emacs` file:
@@ -29,3 +31,4 @@ These variables are available via Customize:
 
 * `wiktionary-show-unordered-languages`: Whether to show additional languages
   that don't appear in `wiktionary-language-order`. True by default.
+
