@@ -14,7 +14,6 @@
 ;;; Look up words in English Wiktionary.  See README.md for details.
 
 (require 'request)
-(require 'thingatpt)
 (require 'dash)
 
 ;;; Code:
@@ -37,7 +36,11 @@
 (defun wiktionary-navigate ()
   "Navigate to the link at point."
   (interactive)
-  (wiktionary-search-word (word-at-point)))
+  (let ((title (plist-get (text-properties-at (point)) 'wiktionary-link-target)))
+    (when (and title
+               ;; TODO - t means self-link. Figure out how to deal with this.
+               (not (eq title t)))
+      (wiktionary-search-word title))))
 
 (defvar wiktionary-result-mode-map
   (let ((map (make-keymap)))
