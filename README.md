@@ -1,6 +1,6 @@
 # Emacs Wiktionary browser
 
-[Screenshot of wiktionary.el in action](./ss.png)
+![Screenshot of wiktionary.el in action](./ss.png)
 
 ## Getting started
 
