@@ -82,6 +82,10 @@
       ((assq 'title a-props)
        (wiktionary--insert-several-body-elts inners (append `(face link wiktionary-link-target ,(cdr (assq 'title a-props))) props)))
       (t (wiktionary--insert-several-body-elts inners props))))
+    ;; todo - these mask earlier definitions
+    (`(b ,_ . ,inners) (wiktionary--insert-several-body-elts inners (append `(face bold) props)))
+    (`(i ,_ . ,inners) (wiktionary--insert-several-body-elts inners (append `(face italic) props)))
+    (`(u ,_ . ,inners) (wiktionary--insert-several-body-elts inners (append `(face underline) props)))
     (`(,_ ,_ . ,inners) (wiktionary--insert-several-body-elts inners props))))
 
 (defun wiktionary--insert-html (src)
