@@ -15,6 +15,7 @@
 
 (require 'request)
 (require 'dash)
+(require 'url-util)
 
 ;;; Code:
 
@@ -213,7 +214,7 @@
 (defun wiktionary-search-word (word)
   "Search for WORD in English Wiktionary and display it in a pop-up buffer."
   (interactive "M")
-  (let* ((url (format "https://en.wiktionary.org/api/rest_v1/page/definition/%s?redirect=true" word))
+  (let* ((url (format "https://en.wiktionary.org/api/rest_v1/page/definition/%s?redirect=true" (url-encode-url word)))
          (r (request url :sync t))
          (_ (let ((code (request-response-status-code r)))
               (unless (= 200 code)
