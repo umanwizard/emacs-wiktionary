@@ -90,6 +90,7 @@
     (`(b ,_ . ,inners) (wiktionary--insert-several-body-elts inners (append `(face bold) props)))
     (`(i ,_ . ,inners) (wiktionary--insert-several-body-elts inners (append `(face italic) props)))
     (`(u ,_ . ,inners) (wiktionary--insert-several-body-elts inners (append `(face underline) props)))
+    (`(comment . ,_))
     (`(,_ ,_ . ,inners) (wiktionary--insert-several-body-elts inners props))))
 
 (defun wiktionary--insert-html (src)
