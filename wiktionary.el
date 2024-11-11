@@ -92,6 +92,8 @@
     (`(i ,_ . ,inners) (wiktionary--insert-several-body-elts inners (append `(face italic) props)))
     (`(u ,_ . ,inners) (wiktionary--insert-several-body-elts inners (append `(face underline) props)))
     (`(comment . ,_))
+    ;; todo - do we ever need to parse these instead of ignoring?
+    (`(style . ,_))
     (`(,_ ,_ . ,inners) (wiktionary--insert-several-body-elts inners props))))
 
 (defun wiktionary--insert-html (src)
