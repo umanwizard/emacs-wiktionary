@@ -119,13 +119,16 @@
          for et being the elements of chunks
          do (let ((lang (or (cdr (assq 'language et)) "<no language>"))
                   (pos (or (cdr (assq 'partOfSpeech et)) "<no part of speech>"))
+                  (gender (assq 'gender et))
                   (defns (let ((q (assq 'definitions et)))
                            (if q (cdr q)
                              []))))
               (cl-loop
                for dfn being the elements of defns
                do (push
-                   `(,pos . ,dfn)
+                   `(,pos . ,(if gender
+                                 (cons gender dfn)
+                               dfn))
                    (alist-get lang langs nil nil #'string-equal)))))))
       ;; TODO -- slow? reads wiktionary-language-order
       ;; lots of times
@@ -156,10 +159,10 @@
              do (let* ((pos (car dfn))
                        (dfn-alist (cdr dfn))
                        (dfn-content (cdr (assq 'definition dfn-alist)))
+                       (dfn-gender (cdr (assq 'gender dfn-alist)))
                        (examples (cdr (assq 'examples dfn-alist))))
-                  (insert (propertize (format "%d. %s:" (1+ i) pos) 'face '(italic ;; underline
-                                                                                   ))
-                          " ")
+                  (insert (propertize (format "%d. %s%s" (1+ i) pos (if dfn-gender (format " (%s)" dfn-gender) "")) 'face '(italic))
+                          ": ")
                   (wiktionary--insert-html dfn-content)
                   (insert ?\n)
                   (cl-loop
