@@ -96,11 +96,16 @@
 
 (defun wiktionary--insert-html (src)
   "Render snippet with html source SRC in the current buffer."
-  (pcase-let ((`(html _ (body _ . ,body))
-               (with-temp-buffer
-                 (insert src)
-                 (libxml-parse-html-region))))
-    (wiktionary--insert-several-body-elts body nil)))
+
+  (let* ((html
+          (with-temp-buffer
+            (insert src)
+            (libxml-parse-html-region)))
+         (body (pcase html
+                 (`(html ,_ (body ,_ . ,body)) body)
+                 (`(html ,_ (head . ,_) (body ,_ . ,body)) body))))
+    (when body
+      (wiktionary--insert-several-body-elts body nil))))
 
 (defun wiktionary--insert-data (data)
   "Render word-data pair DATA in the current buffer."
