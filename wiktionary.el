@@ -222,6 +222,11 @@
   (let* ((url (format "https://en.wiktionary.org/api/rest_v1/page/definition/%s?redirect=true" (url-encode-url word)))
          (r (request url :sync t))
          (_ (let ((code (request-response-status-code r)))
+              (unless code
+                (let ((err (cdr (request-response-error-thrown r))))
+                  (if err
+                      (error (format "Wiktionary query request error: %s" (string-trim err)))
+                    (error "Wiktionary query request failed with unknown error"))))
               (unless (= 200 code)
                 (error (format "Wiktionary query for word %s failed with code %d" word code)))))
          (data (request-response-data r))
